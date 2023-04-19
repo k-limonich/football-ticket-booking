@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Список матчей</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/matches.css">
+</head>
+<body>
+<main layout:fragment="content">
+
+	<div class="container mt-3">
+		<h2>Предстоящие матчи</h2>
+	</div>
+	<div class="container mt-3" th:each="fm : ${footballMatches}">
+		<div class="media border p-3">
+			<img th:src="${fm.homeTeamLogoUrl}" th:alt="${fm.homeTeam + ' logo'}" class="mr-3 mt-3">
+			<img th:src="${fm.awayTeamLogoUrl}" th:alt="${fm.awayTeam + ' logo'}" class="mr-3 mt-3">
+			<div class="media-body">
+				<h4 th:text="${fm.homeTeam + '-' + fm.awayTeam}"></h4>
+				<p><i th:text="${fm.competition}"></i></p>
+				<p th:text="${fm.date + ' | ' + fm.time}"></p>
+			</div>
+			<div>
+				<a th:href="@{matches/{id}(id=${fm.id})}" class="btn btn-primary">Купить билеты</a>
+			</div>
+		</div>
+	</div>
+
+</main>
+</body>
+</html>
