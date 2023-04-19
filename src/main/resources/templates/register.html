@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Регистрация</title>
+	<link rel="stylesheet" type="text/css" href="/css/register.css">
+</head>
+<body>
+<div layout:fragment="content" class="container">
+	<div class="row">
+		<div class="col-lg-10 col-xl-9 mx-auto">
+			<div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+				<div class="card-img-left d-none d-md-flex">
+					<!-- Background image for card set in CSS! -->
+				</div>
+				<div class="card-body p-4 p-sm-5">
+					<h5 class="card-title text-center mb-5 fw-light fs-5">Регистрация</h5>
+					<p class="text-danger" th:if="${ex != null}" th:text="${ex}">Ошибка регистрации</p>
+					<form action="/register" th:action="@{/register}" th:object="${registerRequest}" method="post">
+
+						<div class="form-floating mb-3">
+							<label for="floatingInputFirstName">Имя</label>
+							<input type="text" th:field="*{firstName}" class="form-control" id="floatingInputFirstName" placeholder="Имя" required autofocus>
+						</div>
+
+						<div class="form-floating mb-3">
+							<label for="floatingInputLastName">Фамилия</label>
+							<input type="text" th:field="*{lastName}" class="form-control" id="floatingInputLastName" placeholder="Имя" required autofocus>
+						</div>
+
+						<div class="form-floating mb-3">
+							<label for="floatingInputEmail">Адрес электронной почты</label>
+							<input type="email" th:field="*{email}" class="form-control" id="floatingInputEmail" placeholder="name@example.com" required>
+						</div>
+
+						<div class="form-floating mb-3">
+							<label for="floatingPassword">Пароль</label>
+							<input type="password" th:field="*{password}" class="form-control" id="floatingPassword" placeholder="Пароль" required>
+						</div>
+
+						<div class="d-grid mb-2">
+							<button class="btn btn-block btn-lg btn-primary btn-login fw-bold text-uppercase" type="submit">Зарегистрироваться</button>
+						</div>
+
+						<a class="d-block text-center mt-2 small" href="/login">Уже зарегистрированы? Войти в систему</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
