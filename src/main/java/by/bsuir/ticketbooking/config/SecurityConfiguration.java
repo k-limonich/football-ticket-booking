@@ -1,6 +1,6 @@
 package by.bsuir.ticketbooking.config;
 
-import by.bsuir.ticketbooking.entity.Role;
+import by.bsuir.ticketbooking.entity.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +25,12 @@ public class SecurityConfiguration {
 					.disable()
 				.authenticationProvider(authenticationProvider)
 				.authorizeHttpRequests()
-				.requestMatchers("/", "/matches", "/login", "/register", "/img/**", "/css/**")
+				.requestMatchers("/img/**", "/css/**", "/js/**")
 					.permitAll()
-				.requestMatchers("/matches/**").hasRole(Role.ROLE_CUSTOMER.name())
-				.requestMatchers("/admin/**").hasRole(Role.ROLE_ADMIN.name())
+				.requestMatchers("/", "/matches", "/login", "/register")
+					.permitAll()
+				.requestMatchers("/matches/**").hasAuthority(Role.CUSTOMER.name())
+				.requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
