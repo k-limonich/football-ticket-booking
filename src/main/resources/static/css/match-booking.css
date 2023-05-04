@@ -1,0 +1,59 @@
+main > div.d-flex {
+    gap: 100px;
+}
+
+button.seat {
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.free {
+    background: #04AA6D;
+}
+
+.booked {
+    background: gray;
+}
+
+.pending {
+    background: orange;
+}
+
+.selected {
+    background-color: firebrick;
+}
+
+th,td {
+    text-align: center;
+}
+
+td.empty {
+    width: 20px;
+}
+
+img.pitch {
+    width: 550px;
+    height: 350px;
+    margin-top: 20px;
+}
+
+li.list-group-item {
+    font-size: 15px;
+}
+
+#cardOwner {
+    text-transform: uppercase;
+}
+
+.dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.opacity {
+    opacity: .65;
+}

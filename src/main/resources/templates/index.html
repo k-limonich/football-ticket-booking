@@ -5,44 +5,49 @@
 <head>
 	<title>Главная</title>
 	<link rel="stylesheet" type="text/css" href="/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/css/logo.css">
 </head>
 <body>
 
-<div layout:fragment="content" id="demo" class="carousel slide" data-ride="carousel">
-	<ul class="carousel-indicators">
-		<li data-target="#demo" data-slide-to="0" class="active"></li>
-		<li data-target="#demo" data-slide-to="1"></li>
-		<li data-target="#demo" data-slide-to="2"></li>
-	</ul>
-	<div class="carousel-inner">
-		<div class="carousel-item active">
-			<img src="/img/img_1.png" alt="Los Angeles" width="1100" height="500">
-			<div class="carousel-caption">
-				<h3>Los Angeles</h3>
-				<p>We had such a great time in LA!</p>
+<main layout:fragment="content">
+	<div class="container mt-4 mb-4">
+		<h2 class="text-center">Приветствуем Вас в системе покупки билетов на футбол</h2>
+	</div>
+
+	<div class="container d-flex justify-content-between">
+		<div class="card bg-primary text-white">
+			<div class="card-body">
+				<h4 class="card-title">Покупайте билеты онлайн</h4>
+				<p class="card-text">Ознакомьтесь со списком предстоящих матчей и выберите матч, который желаете посетить</p>
 			</div>
 		</div>
-		<div class="carousel-item">
-			<img src="/img/img_21.png" alt="Chicago">
-			<div class="carousel-caption">
-				<h3>Chicago</h3>
-				<p>Thank you, Chicago!</p>
-			</div>
-		</div>
-		<div class="carousel-item">
-			<img src="/img/img_3.png" alt="New York">
-			<div class="carousel-caption">
-				<h3>New York</h3>
-				<p>We love the Big Apple!</p>
+		<div class="card bg-primary text-white">
+			<div class="card-body">
+				<h4 class="card-title">Бронируйте лучшие места</h4>
+				<p class="card-text">Выберите наиболее подходящие для Вас места с помощью интерактивной карты стадиона</p>
 			</div>
 		</div>
 	</div>
-	<a class="carousel-control-prev" href="#demo" data-slide="prev">
-		<span class="carousel-control-prev-icon"></span>
-	</a>
-	<a class="carousel-control-next" href="#demo" data-slide="next">
-		<span class="carousel-control-next-icon"></span>
-	</a>
-</div>
+
+	<div class="container d-flex justify-content-between mt-4 mb-4">
+		<h2>Ближайший матч</h2>
+	</div>
+	<div class="container mt-3">
+		<div class="media border p-3">
+			<div class="logo-holder d-flex justify-content-center align-items-center mr-3">
+				<img th:src="${footballMatch.homeTeamLogoUrl}" th:alt="${footballMatch.homeTeam + ' logo'}" class="logo">
+				<img th:src="${footballMatch.awayTeamLogoUrl}" th:alt="${footballMatch.awayTeam + ' logo'}" class="logo">
+			</div>
+			<div class="media-body">
+				<h4 th:text="${footballMatch.homeTeam + ' - ' + footballMatch.awayTeam}"></h4>
+				<p><i th:text="${footballMatch.competition}"></i></p>
+				<p th:text="${footballMatch.getDateFormatted() + ' | ' + footballMatch.getTimeFormatted()}"></p>
+			</div>
+			<div>
+				<a th:href="@{matches/{id}/booking(id=${footballMatch.id})}" class="btn btn-primary">Купить билеты</a>
+			</div>
+		</div>
+	</div>
+</main>
 </body>
 </html>

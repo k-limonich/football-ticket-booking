@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Мои билеты</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/gap.css">
+	<link rel="stylesheet" type="text/css" href="/css/logo.css">
+</head>
+<body>
+<main layout:fragment="content">
+	<div class="container mt-4">
+		<h2>Мои билеты</h2>
+		<div id="accordion">
+			<div class="card mt-4" th:each="booking : ${bookings}" th:id="|booking-${booking.id}|">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<div class="d-flex align-items-center gap-30">
+						<div class="logo-holder d-flex justify-content-center align-items-center">
+							<img th:src="${booking.footballMatch.homeTeamLogoUrl}"
+								 th:alt="|${booking.footballMatch.homeTeam}|" class="logo">
+							<img th:src="${booking.footballMatch.awayTeamLogoUrl}"
+								 th:alt="|${booking.footballMatch.awayTeam}|" class="logo">
+						</div>
+						<div>
+							<h4 th:text="|${booking.footballMatch.homeTeam} - ${booking.footballMatch.awayTeam}|"></h4>
+							<p><i th:text="${booking.footballMatch.competition}"></i></p>
+							<p th:text="${booking.footballMatch.date} + ' | ' + ${booking.footballMatch.time}"></p>
+						</div>
+					</div>
+					<div>
+						<p th:text="|Идентификатор билета: ${booking.id}|"></p>
+						<button class="btn btn-primary btn-block card-link" data-toggle="collapse"
+								th:href="@{'#collapse-' + ${booking.id}}">Подробнее
+						</button>
+					</div>
+				</div>
+				<div th:id="|collapse-${booking.id}|" class="collapse">
+					<div class="card-body d-flex justify-content-around">
+						<h4 th:text="|Сектор: ${booking.seat.sector}|"></h4>
+						<h4 th:text="|Ряд: ${booking.seat.seatRowNumber}|"></h4>
+						<h4 th:text="|Место: ${booking.seat.seatNumber}|"></h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:if="${bookings.totalPages > 1}" class="container mt-5">
+		<ul class="pagination">
+			<li class="page-item" th:classappend="${bookings.pageable.pageNumber == 0} ? 'disabled'">
+				<a class="page-link"
+				   th:href="@{/account/bookings(page=${bookings.pageable.pageNumber})}">Назад</a>
+			</li>
+			<li th:each="pageNumber : ${pageNumbers}"
+				class="page-item"
+				th:classappend="${(bookings.pageable.pageNumber + 1) == pageNumber} ? 'active'">
+				<a class="page-link"
+				   th:text="${pageNumber}"
+				   th:href="@{/account/bookings(page=${pageNumber})}">
+				</a>
+			</li>
+			<li class="page-item"
+				th:classappend="${(bookings.pageable.pageNumber + 1) == pageNumbers.size()} ? 'disabled'">
+				<a class="page-link" th:href="@{/account/bookings(page=${bookings.pageable.pageNumber + 2})}">Далее</a>
+			</li>
+		</ul>
+	</div>
+</main>
+</body>
+</html>

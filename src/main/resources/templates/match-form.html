@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Список матчей</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/form.css">
+</head>
+<body>
+<main layout:fragment="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-10 col-xl-10 mx-auto">
+				<div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+					<div class="card-img-2 d-none d-md-flex">
+						<!-- Background image for card set in CSS! -->
+					</div>
+					<div class="card-body p-4 p-sm-5">
+						<th:block th:switch="${action}">
+							<h5 th:case="new" class="card-title text-center mb-5 fs-5">Добавление матча</h5>
+							<h5 th:case="edit" class="card-title text-center mb-5 fs-5">Редактирование матча</h5>
+						</th:block>
+
+						<form th:object="${footballMatch}" th:action="${action == 'new'} ? @{/admin/matches/new} : @{/admin/matches/{id}/edit(id=${footballMatch.id})}" method="post">
+
+							<div class="form-group">
+								<label for="homeTeamInput">Домашняя команда</label>
+								<input th:field="*{homeTeam}"
+									   type="text"
+									   name="homeTeam"
+									   id="homeTeamInput"
+									   class="form-control"
+									   placeholder="Название домашней команды"
+									   required>
+							</div>
+
+							<div class="form-group">
+								<label for="homeTeamLogoUrlInput">Логотип домашней команды</label>
+								<input th:field="*{homeTeamLogoUrl}"
+									   type="text"
+									   name="homeTeamLogoUrl"
+									   id="homeTeamLogoUrlInput"
+									   class="form-control"
+									   placeholder="URL-адрес изображения"
+									   required>
+							</div>
+
+							<div class="form-group">
+								<label for="awayTeamInput">Гостевая команда</label>
+								<input th:field="*{awayTeam}"
+									   type="text"
+									   name="awayTeam"
+									   id="awayTeamInput"
+									   class="form-control"
+									   placeholder="Название гостевой команды"
+									   required>
+							</div>
+
+							<div class="form-group">
+								<label for="awayTeamLogoUrlInput">Логотип гостевой команды</label>
+								<input th:field="*{awayTeamLogoUrl}"
+									   type="text"
+									   name="awayTeamLogoUrl"
+									   id="awayTeamLogoUrlInput"
+									   class="form-control"
+									   placeholder="URL-адрес изображения"
+									   required>
+							</div>
+
+							<div class="form-group">
+								<label for="competitionInput">Название соревнования</label>
+								<input th:field="*{competition}"
+									   type="text"
+									   name="competition"
+									   id="competitionInput"
+									   class="form-control"
+									   placeholder="Название соревнования"
+									   required>
+							</div>
+
+							<div class="form-group">
+								<label for="dateInput">Дата проведения</label>
+								<input th:field="*{date}"
+									   type="date"
+									   name="date"
+									   id="dateInput"
+									   required>
+								<p class="small"
+								   th:if="${footballMatch.date != null}"
+								   th:text="|Прежняя дата: ${footballMatch.getDateFormatted()}|"></p>
+							</div>
+
+							<div class="form-group">
+								<label for="timeInput">Время проведения</label>
+								<input th:field="*{time}"
+									   type="time"
+									   name="time"
+									   id="timeInput"
+									   required>
+							</div>
+
+							<div th:switch="${action}" class="text-center">
+								<input th:case="new" type="submit" class="btn btn-primary" value="Добавить">
+								<input th:case="edit" type="submit" class="btn btn-primary" value="Сохранить">
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+</body>
+</html>

@@ -14,11 +14,14 @@
 
 	<div class="collapse navbar-collapse" id="navbar">
 		<ul class="navbar-nav ml-auto">
-			<li sec:authorize="!hasRole('ROLE_ADMIN')" class="nav-item active">
+			<li sec:authorize="!hasAuthority('ADMIN')" class="nav-item active">
 				<a class="nav-link" th:href="@{/}">Главная</a>
 			</li>
-			<li sec:authorize="!hasRole('ROLE_ADMIN')" class="nav-item active">
-				<a class="nav-link" th:href="@{/matches}">Матчи</a>
+			<li class="nav-item active">
+				<a sec:authorize="!hasAuthority('ADMIN')"
+				   class="nav-link" th:href="@{/matches}">Матчи</a>
+				<a sec:authorize="hasAuthority('ADMIN')"
+				   class="nav-link" th:href="@{/admin/matches}">Матчи</a>
 			</li>
 			<li class="nav-item" sec:authorize="!isAuthenticated()">
 				<a class="nav-link" th:href="@{/login}">Авторизация</a>
@@ -28,9 +31,11 @@
 					Мой аккаунт
 				</a>
 				<div class="dropdown-menu dropdown-menu-right dropdown-info">
-					<a class="dropdown-item" href="#">Мои билеты</a>
-					<a class="dropdown-item" href="#">История платежей</a>
-					<div class="dropdown-divider"></div>
+					<th:block sec:authorize="hasAuthority('CUSTOMER')">
+						<a class="dropdown-item" href="/account/bookings">Мои билеты</a>
+						<a class="dropdown-item" href="/account/payments">История платежей</a>
+						<div class="dropdown-divider"></div>
+					</th:block>
 					<a class="dropdown-item" th:href="@{/logout}">Выход</a>
 				</div>
 			</li>

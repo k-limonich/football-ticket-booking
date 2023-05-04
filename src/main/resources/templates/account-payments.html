@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>История платежей</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/gap.css">
+</head>
+<body>
+<main layout:fragment="content">
+	<div class="container mt-4">
+		<h2>История платежей</h2>
+		<ul class="list-group mt-4" th:each="payment : ${payments}">
+			<li class="list-group-item d-flex justify-content-between">
+				<div class="d-flex gap-60">
+					<div>
+						<h5 th:text="'Платеж №' + ${payment.id}"></h5>
+						<p th:text="|Совершен ${payment.getTimestampFormatted()}|"></p>
+					</div>
+					<div th:if="${payment.bookings.size() != 0}"
+						 th:with="footballMatch = ${payment.bookings.get(0).footballMatch}">
+						<h5>Матч</h5>
+						<span th:text="|${footballMatch.homeTeam} - ${footballMatch.awayTeam}|"></span><br>
+						<span th:text="${footballMatch.date} + ' | ' + ${footballMatch.time}"></span>
+					</div>
+				</div>
+				<div th:if="${payment.bookings.size() == 0}" class="gap-60">
+					<h5 class="text-center">Матч отменен</h5>
+					<p>Обратитесь в кассу стадиона за возвратом средств</p>
+				</div>
+				<div class="d-flex gap-60">
+					<div th:if="${payment.bookings.size() != 0}">
+						<h5>Оплаченные билеты</h5>
+						<span class="text-center"
+							  th:each="booking : ${payment.bookings}"
+							  th:text="${booking.id} + ' '"></span>
+					</div>
+					<div>
+						<h5>Сумма платежа</h5>
+						<p th:text="|${payment.amountDoubleValue} BYN|"></p>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div th:if="${payments.totalPages > 1}" class="container mt-5">
+		<ul class="pagination">
+			<li class="page-item" th:classappend="${payments.pageable.pageNumber == 0} ? 'disabled'">
+				<a class="page-link"
+				   th:href="@{/account/payments(page=${payments.pageable.pageNumber})}">Назад</a>
+			</li>
+			<li th:each="pageNumber : ${pageNumbers}"
+				class="page-item"
+				th:classappend="${(payments.pageable.pageNumber + 1) == pageNumber} ? 'active'">
+				<a class="page-link"
+				   th:text="${pageNumber}"
+				   th:href="@{/account/payments(page=${pageNumber})}">
+				</a>
+			</li>
+			<li class="page-item"
+				th:classappend="${(payments.pageable.pageNumber + 1) == pageNumbers.size()} ? 'disabled'">
+				<a class="page-link" th:href="@{/account/payments(page=${payments.pageable.pageNumber + 2})}">Далее</a>
+			</li>
+		</ul>
+	</div>
+</main>
+</body>
+</html>

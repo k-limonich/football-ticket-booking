@@ -1,0 +1,88 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Продажи билетов</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/gap.css">
+	<link rel="stylesheet" type="text/css" href="/css/logo.css">
+	<link rel="stylesheet" type="text/css" href="/css/match-booking.css">
+</head>
+<body>
+<main layout:fragment="content">
+
+	<div class="container mt-5">
+		<div class="media border p-3">
+			<div class="logo-holder d-flex justify-content-center align-items-center mr-3">
+				<img th:src="${footballMatch.homeTeamLogoUrl}" th:alt="${footballMatch.homeTeam + ' logo'}"
+					 class="logo">
+				<img th:src="${footballMatch.awayTeamLogoUrl}" th:alt="${footballMatch.awayTeam + ' logo'}"
+					 class="logo">
+			</div>
+			<div class="media-body">
+				<h4 th:text="${footballMatch.homeTeam + ' - ' + footballMatch.awayTeam}"></h4>
+				<p><i th:text="${footballMatch.competition}"></i></p>
+				<p th:text="${footballMatch.getDateFormatted() + ' | ' + footballMatch.getTimeFormatted()}"></p>
+			</div>
+		</div>
+	</div>
+	<div class="container d-flex">
+		<div class="container mt-5">
+			<table th:with="totalColumns=${seatRows.get(0).size() + 2}">
+				<tr>
+					<th colspan="9">Сектор A</th>
+					<th colspan="11">Сектор B</th>
+					<th colspan="9">Сектор C</th>
+				</tr>
+				<tr th:each="row : ${seatRows}">
+					<th:block th:each="seat : ${row}">
+						<td>
+							<button class="btn seat"
+									th:classappend="${seat.isBooked} ? 'booked' : (${seat.isPending()} ? 'pending' : 'free')"
+									th:id="${seat.id}"
+									th:disabled="${seat.isBooked}"
+									th:title="|${seat.price} BYN|"
+									th:data-content="|Сектор: ${seat.sector}<br>Ряд: ${seat.seatRowNumber}<br>Место: ${seat.seatNumber}|"
+									th:name="|Сектор: ${seat.sector}, Ряд: ${seat.seatRowNumber}, Место: ${seat.seatNumber}, Стоимость: ${seat.price} BYN|"
+									data-toggle="popover" data-trigger="hover" data-html="true">
+							</button>
+						</td>
+						<td class="empty" th:if="${seat.seatNumber} == 9 and ${seat.sector.name} != 'C'">
+						</td>
+					</th:block>
+				</tr>
+				<tr>
+					<td th:colspan="${totalColumns}">
+						<img class="pitch" src="/img/pitch.png" alt="football pitch">
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="container mt-5">
+			<h2>Продажи билетов</h2>
+			<ul class="list-group mt-4">
+				<li class="list-group-item align-items-center d-flex gap-30">
+					<span class="dot booked opacity"></span>
+					<h4 class="m-0" th:text="|Забронировано: ${bookedSeatsNumber}|"></h4>
+				</li>
+				<li class="list-group-item align-items-center d-flex gap-30">
+					<span class="dot pending"></span>
+					<h4 class="m-0" th:text="|Ожидают оплаты: ${pendingSeatsNumber}|"></h4>
+				</li>
+				<li class="list-group-item align-items-center d-flex gap-30">
+					<span class="dot free"></span>
+					<h4 class="m-0" th:text="|Свободно: ${freeSeatsNumber}|"></h4>
+				</li>
+			</ul>
+		</div>
+	</div>
+</main>
+<th:block layout:fragment="optional">
+	<script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+	</script>
+</th:block>
+</body>
+</html>

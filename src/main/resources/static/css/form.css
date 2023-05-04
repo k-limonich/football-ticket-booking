@@ -3,10 +3,16 @@ body {
     background: linear-gradient(to right, #0062E6, #33AEFF);
 }
 
-.card-img-left {
+.card-img-1 {
     width: 45%;
     /* Link to your background image using in the property below! */
     background: scroll center url('../img/auth_stadium.png');
+    background-size: cover;
+}
+
+.card-img-2 {
+    width: 45%;
+    background: scroll center url('../img/messi.png');
     background-size: cover;
 }
 

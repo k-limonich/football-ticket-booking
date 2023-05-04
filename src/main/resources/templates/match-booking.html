@@ -1,0 +1,227 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Бронирование билетов</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/gap.css">
+	<link rel="stylesheet" type="text/css" href="/css/logo.css">
+	<link rel="stylesheet" type="text/css" href="/css/match-booking.css">
+</head>
+<body>
+<main layout:fragment="content">
+
+	<div class="container mt-5">
+		<div class="media border p-3">
+			<div class="logo-holder d-flex justify-content-center align-items-center mr-3">
+				<img th:src="${footballMatch.homeTeamLogoUrl}" th:alt="${footballMatch.homeTeam + ' logo'}"
+					 class="logo">
+				<img th:src="${footballMatch.awayTeamLogoUrl}" th:alt="${footballMatch.awayTeam + ' logo'}"
+					 class="logo">
+			</div>
+			<div class="media-body">
+				<h4 th:text="${footballMatch.homeTeam + ' - ' + footballMatch.awayTeam}"></h4>
+				<p><i th:text="${footballMatch.competition}"></i></p>
+				<p th:text="${footballMatch.getDateFormatted() + ' | ' + footballMatch.getTimeFormatted()}"></p>
+			</div>
+		</div>
+	</div>
+	<div class="container d-flex">
+		<div class="container mt-5">
+			<div class="d-flex justify-content-center align-items-center gap-30 mb-4">
+				<div class="d-flex align-items-center gap-15">
+					<span class="dot free"></span>
+					<p class="m-0">Свободно</p>
+				</div>
+				<div class="d-flex align-items-center gap-15">
+					<span class="dot pending"></span>
+					<p class="m-0">Ожидает оплаты</p>
+				</div>
+				<div class="d-flex align-items-center gap-15">
+					<span class="dot booked opacity"></span>
+					<p class="m-0">Забронировано</p>
+				</div>
+			</div>
+			<table th:with="totalColumns=${seatRows.get(0).size() + 2}">
+				<tr>
+					<th colspan="9">Сектор A</th>
+					<th colspan="11">Сектор B</th>
+					<th colspan="9">Сектор C</th>
+				</tr>
+				<tr th:each="row : ${seatRows}">
+					<th:block th:each="seat : ${row}">
+						<td>
+							<button class="btn seat"
+									th:classappend="${seat.isBooked} ? 'booked' : (${seat.isPending()} ? 'pending' : 'free')"
+									th:id="${seat.id}"
+									th:disabled="${seat.isBooked}"
+									th:title="|${seat.price} BYN|"
+									th:data-content="|Сектор: ${seat.sector}<br>Ряд: ${seat.seatRowNumber}<br>Место: ${seat.seatNumber}|"
+									th:name="|Сектор: ${seat.sector}, Ряд: ${seat.seatRowNumber}, Место: ${seat.seatNumber}, Стоимость: ${seat.price} BYN|"
+									data-toggle="popover" data-trigger="hover" data-html="true"
+									onclick="onSeatButtonClick(this)">
+							</button>
+						</td>
+						<td class="empty" th:if="${seat.seatNumber} == 9 and ${seat.sector.name} != 'C'">
+						</td>
+					</th:block>
+				</tr>
+				<tr>
+					<td th:colspan="${totalColumns}">
+						<img class="pitch" src="/img/pitch.png" alt="football pitch">
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="container mt-5">
+			<ul class="nav nav-tabs" role="tablist" id="booking-tabs">
+				<li class="nav-item">
+					<a id="tickets-tab-link"
+					   class="nav-link"
+					   th:classappend="${toPayment != 'true'} ? 'active' : 'disabled'"
+					   data-toggle="tab">Билеты</a>
+				</li>
+				<li class="nav-item">
+					<a id="payment-tab-link"
+					   class="nav-link"
+					   th:classappend="${toPayment == 'true'} ? 'active' : 'disabled'"
+					   data-toggle="tab">Оплата</a>
+				</li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div id="tickets"
+					 class="container tab-pane"
+					 th:classappend="${toPayment != 'true'} ? 'active'"><br>
+					<h3 class="text-center">Ваша корзина</h3>
+					<ul id="ticket-cart" class="list-group mt-4"></ul>
+					<form th:action="@{/matches/{id}/booking(id=${matchId})}" method="post" id="to-payment-form">
+						<input type="hidden" id="selected-seats-input" name="selected-seats" value="">
+						<input type="submit"
+							   id="to-payment-btn"
+							   class="btn btn-primary btn-block mt-4"
+							   style="display: none"
+							   value="К оплате">
+					</form>
+				</div>
+				<div id="payment"
+					 class="container tab-pane"
+					 th:classappend="${toPayment == 'true'} ? 'active'"><br>
+					<h3 class="text-center">Оплата билетов</h3>
+					<ul id="ticket-checkout" class="list-group mt-4">
+						<li class="list-group-item"
+							th:each="selectedSeat : ${selectedSeats}"
+							th:text="|Сектор: ${selectedSeat.sector}, Ряд: ${selectedSeat.seatRowNumber}, Место: ${selectedSeat.seatNumber}, Стоимость: ${selectedSeat.price} BYN|"></li>
+					</ul>
+					<h5 class="text-center mt-3 mb-3" th:text="|Итого к оплате: ${totalCost} BYN|"></h5>
+					<div class="card mt-3 p-4">
+						<form th:action="@{/matches/{id}/booking/payment(id=${matchId})}"
+							  method="post"
+							  id="payment-form"
+							  onsubmit="return isValidCardDetails()">
+							<div class="form-group">
+								<label for="cardOwner"><h6>Имя Фамилия</h6></label>
+								<input type="text" id="cardOwner"
+									   name="cardOwner"
+									   placeholder="FIRSTNAME LASTNAME"
+									   class="form-control"
+									   autocomplete="off"
+									   required>
+							</div>
+							<div class="form-group">
+								<label for="cardNumber"><h6>Номер Карты</h6></label>
+								<div class="input-group">
+									<input type="text" id="cardNumber"
+										   name="cardNumber"
+										   placeholder="0000 0000 0000 0000"
+										   minlength="19"
+										   maxlength="19"
+										   class="form-control"
+										   required>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-8">
+									<div class="form-group">
+										<label><h6>Срок действия</h6></label>
+										<div class="input-group">
+											<input type="number"
+												   placeholder="ММ"
+												   id="expirationMonth"
+												   name="expirationMonth"
+												   class="form-control"
+												   min="1"
+												   max="12"
+												   required>
+											<input type="number"
+												   placeholder="ГГ"
+												   id="expirationYear"
+												   name="expirationYear"
+												   class="form-control"
+												   min="20"
+												   max="50"
+												   required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group mb-4">
+										<label for="cvv"><h6>CVV</h6></label>
+										<input id="cvv"
+											   type="text"
+											   name="cvv"
+											   class="form-control"
+											   placeholder="123"
+											   minlength="3"
+											   maxlength="3"
+											   required>
+									</div>
+								</div>
+							</div>
+							<input type="hidden"
+								   name="amount"
+								   th:value="${totalCost}">
+							<input type="hidden"
+								   th:each="seat : ${selectedSeats}"
+								   th:name="selected-seat-ids"
+								   th:value="${seat.id}">
+							<div class="card-footer border">
+								<input type="submit"
+									   class="btn btn-primary btn-block shadow-sm"
+									   value="Оплатить">
+							</div>
+						</form>
+						<div class="card-footer border">
+							<form th:action="@{/matches/{id}/booking/cancel(id=${matchId})}" method="post">
+								<input type="hidden" th:each="seat : ${selectedSeats}" th:name="seat-ids-to-cancel"
+									   th:value="${seat.id}">
+								<input type="submit" value="Отменить" class="btn btn-secondary btn-block shadow-sm">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<th:block layout:fragment="optional">
+	<script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+	</script>
+	<script>
+        const input = document.getElementById('cardNumber');
+        input.addEventListener("input", () => input.value = formatNumber(input.value.replaceAll(" ", "")));
+
+        const formatNumber = (number) => number.split("").reduce((seed, next, index) => {
+            if (index !== 0 && !(index % 4)) seed += " ";
+            return seed + next;
+        }, "");
+	</script>
+	<script src="/js/match-booking.js"></script>
+	<script src="/js/payment-validation.js"></script>
+</th:block>
+</body>
+</html>

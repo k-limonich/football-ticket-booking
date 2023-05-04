@@ -1,29 +1,45 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="~{layouts/layout}">
 <head>
 	<title>Список матчей</title>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" type="text/css" href="/css/matches.css">
+	<link rel="stylesheet" type="text/css" href="/css/gap.css">
+	<link rel="stylesheet" type="text/css" href="/css/logo.css">
 </head>
 <body>
 <main layout:fragment="content">
 
-	<div class="container mt-3">
+	<div class="container d-flex justify-content-between mt-4 mb-4">
 		<h2>Предстоящие матчи</h2>
+		<div class="d-flex align-items-center mr-3">
+			<a sec:authorize="hasAuthority('ADMIN')"
+			   href="/admin/matches/new"
+			   class="btn btn-success">Добавить</a>
+		</div>
 	</div>
 	<div class="container mt-3" th:each="fm : ${footballMatches}">
 		<div class="media border p-3">
-			<img th:src="${fm.homeTeamLogoUrl}" th:alt="${fm.homeTeam + ' logo'}" class="mr-3 mt-3">
-			<img th:src="${fm.awayTeamLogoUrl}" th:alt="${fm.awayTeam + ' logo'}" class="mr-3 mt-3">
-			<div class="media-body">
-				<h4 th:text="${fm.homeTeam + '-' + fm.awayTeam}"></h4>
-				<p><i th:text="${fm.competition}"></i></p>
-				<p th:text="${fm.date + ' | ' + fm.time}"></p>
+			<div class="logo-holder d-flex justify-content-center align-items-center mr-3">
+				<img th:src="${fm.homeTeamLogoUrl}" th:alt="${fm.homeTeam + ' logo'}" class="logo">
+				<img th:src="${fm.awayTeamLogoUrl}" th:alt="${fm.awayTeam + ' logo'}" class="logo">
 			</div>
-			<div>
-				<a th:href="@{matches/{id}(id=${fm.id})}" class="btn btn-primary">Купить билеты</a>
+			<div class="media-body">
+				<h4 th:text="${fm.homeTeam + ' - ' + fm.awayTeam}"></h4>
+				<p><i th:text="${fm.competition}"></i></p>
+				<p th:text="${fm.getDateFormatted() + ' | ' + fm.getTimeFormatted()}"></p>
+			</div>
+			<div sec:authorize="!hasAuthority('ADMIN')">
+				<a th:href="@{matches/{id}/booking(id=${fm.id})}" class="btn btn-primary">Купить билеты</a>
+			</div>
+			<div sec:authorize="hasAuthority('ADMIN')" class="d-flex flex-column gap-5">
+				<a th:href="@{/admin/matches/{id}/edit(id=${fm.id})}" class="btn btn-info btn-block">Редактировать</a>
+				<form th:action="@{/admin/matches/{id}/delete(id=${fm.id})}" method="post">
+					<input type="submit" value="Удалить" class="btn btn-danger btn-block">
+				</form>
+				<a th:href="@{/admin/matches/{id}/bookings(id=${fm.id})}" class="btn btn-primary btn-block">Просмотреть продажи</a>
 			</div>
 		</div>
 	</div>

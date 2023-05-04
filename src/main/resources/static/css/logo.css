@@ -1,0 +1,10 @@
+.logo-holder {
+    height: 120px;
+    width: 150px;
+    gap: 10px;
+}
+
+.logo {
+    max-width: 60px;
+    max-height: 60px;
+}
