@@ -11,13 +11,10 @@ import java.util.List;
 @Repository
 public interface FootballMatchRepository extends JpaRepository<FootballMatch, Long> {
 
-	@Query("FROM FootballMatch m WHERE  m.date >= ?1")
+	@Query("FROM FootballMatch m WHERE  m.date >= ?1 ORDER BY m.date")
 	List<FootballMatch> findFootballMatchesOnAndAfterDate(LocalDate date);
 
-	@Query("FROM FootballMatch m WHERE m.date >= ?1 AND YEARWEEK(?1) = YEARWEEK(m.date)")
-	List<FootballMatch> findFootballMatchesOnAndAfterDateOnThatWeek(LocalDate date);
+	@Query("FROM FootballMatch m WHERE  m.date >= ?1 ORDER BY m.date LIMIT 1")
+	FootballMatch findClosesFootballMatch(LocalDate date);
 
-	@Query("FROM FootballMatch m WHERE m.date >= ?1 " +
-			" AND MONTH(?1) = MONTH(m.date) AND YEAR(?1) = YEAR(m.date)")
-	List<FootballMatch> findFootballMatchesOnAndAfterDateAfterOnThatMonthAndYear(LocalDate date);
 }
