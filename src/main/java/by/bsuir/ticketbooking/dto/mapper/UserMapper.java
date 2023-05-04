@@ -3,7 +3,7 @@ package by.bsuir.ticketbooking.dto.mapper;
 import by.bsuir.ticketbooking.dto.UserInfo;
 import by.bsuir.ticketbooking.dto.UserLoginRequest;
 import by.bsuir.ticketbooking.dto.UserRegisterRequest;
-import by.bsuir.ticketbooking.entity.Role;
+import by.bsuir.ticketbooking.entity.enums.Role;
 import by.bsuir.ticketbooking.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +21,7 @@ public class UserMapper {
 				.lastName(request.lastName())
 				.email(request.email())
 				.password(passwordEncoder.encode(request.password()))
-				.role(Role.ROLE_CUSTOMER)
+				.role(Role.CUSTOMER)
 				.build();
 	}
 
