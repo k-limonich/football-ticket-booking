@@ -1,5 +1,6 @@
 package by.bsuir.ticketbooking.entity;
 
+import by.bsuir.ticketbooking.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,34 +41,12 @@ public class User implements UserDetails {
 	private String password;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
-			orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Booking> bookings = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
-			orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Payment> payments = new ArrayList<>();
-
-	public void addBooking(Booking booking) {
-		bookings.add(booking);
-		booking.setUser(this);
-	}
-
-	public void addPayment(Payment payment) {
-		payments.add(payment);
-		payment.setUser(this);
-	}
-
-	public void removeBooking(Booking booking) {
-		bookings.remove(booking);
-		booking.setUser(null);
-	}
-
-	public void removePayment(Payment payment) {
-		payments.remove(payment);
-		payment.setUser(null);
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,6 @@
 package by.bsuir.ticketbooking.entity;
 
+import by.bsuir.ticketbooking.entity.enums.Sector;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,21 +36,11 @@ public class Seat {
 	private BigDecimal price;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "seat", cascade = CascadeType.ALL,
-			orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "seat", orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Booking> bookings = new ArrayList<>();
 
 	public double getPriceDoubleValue() {
 		return price.setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
 
-	public void addBooking(Booking booking) {
-		bookings.add(booking);
-		booking.setSeat(this);
-	}
-
-	public void removeBooking(Booking booking) {
-		bookings.remove(booking);
-		booking.setSeat(null);
-	}
 }

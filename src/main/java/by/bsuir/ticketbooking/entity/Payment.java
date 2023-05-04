@@ -1,19 +1,20 @@
 package by.bsuir.ticketbooking.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "bookings")
 @Entity
 @Table(name = "payment")
 public class Payment {
@@ -31,6 +32,18 @@ public class Payment {
 
 	@Column(nullable = false)
 	private LocalDateTime timestamp;
+
+	@Builder.Default
+	@OneToMany(mappedBy = "payment", orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<Booking> bookings = new ArrayList<>();
+
+	public void addBooking(Booking booking) {
+		bookings.add(booking);
+	}
+
+	public String getTimestampFormatted() {
+		return timestamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+	}
 
 	public double getAmountDoubleValue() {
 		return amount.setScale(2, RoundingMode.HALF_UP).doubleValue();

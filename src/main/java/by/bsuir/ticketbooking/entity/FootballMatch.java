@@ -5,8 +5,11 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Data
 @Builder
@@ -42,8 +45,16 @@ public class FootballMatch {
 	private LocalTime time;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "footballMatch", cascade = CascadeType.ALL,
-			orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "footballMatch", orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Booking> bookings = new ArrayList<>();
 
+	public String getDateFormatted() {
+		return DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+				.withLocale(Locale.forLanguageTag("ru"))
+				.format(date);
+	}
+
+	public String getTimeFormatted() {
+		return time.format(DateTimeFormatter.ofPattern("HH:mm"));
+	}
 }

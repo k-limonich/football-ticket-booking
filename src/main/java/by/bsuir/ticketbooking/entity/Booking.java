@@ -1,10 +1,8 @@
 package by.bsuir.ticketbooking.entity;
 
+import by.bsuir.ticketbooking.entity.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -31,6 +29,10 @@ public class Booking {
 	private Seat seat;
 
 	@ManyToOne
-	@JoinColumn(name = "payment_id", nullable = false)
+	@JoinColumn(name = "payment_id")
 	private Payment payment;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Status status;
 }
