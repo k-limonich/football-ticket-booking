@@ -1,12 +1,11 @@
 package by.bsuir.ticketbooking.service;
 
 import by.bsuir.ticketbooking.entity.Payment;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PaymentService {
 
-	Payment getPaymentById(Long id);
-	List<Payment> getPaymentByUserId(Long userId);
-	Payment createPayment(Payment payment);
+	Page<Payment> getPaymentByUserId(Long userId, Pageable pageable);
+	void createPayment(Payment payment);
 }
